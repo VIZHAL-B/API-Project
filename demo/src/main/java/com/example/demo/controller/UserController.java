@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,6 +22,14 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    // ✅ Endpoint to fetch users within a given ID range
+    @GetMapping("/range")
+    public List<User> getUsersInRange(
+            @RequestParam Long startId,
+            @RequestParam Long endId) {
+        return userService.getUsersBetweenIds(startId, endId);
     }
 
     // Get all users with sorting & pagination using JPQL

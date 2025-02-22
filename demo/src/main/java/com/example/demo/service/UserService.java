@@ -21,6 +21,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    // ✅ Fetch users between two ID points
+    public List<User> getUsersBetweenIds(Long startId, Long endId) {
+        return userRepository.findUsersBetweenIds(startId, endId);
+    }
+
     // Fetch all users with pagination & sorting
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
