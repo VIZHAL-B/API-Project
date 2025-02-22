@@ -10,9 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 
 import java.util.Optional;
 
@@ -26,14 +23,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Get all users with sorting & pagination
+    // Get all users with sorting & pagination using JPQL
     @GetMapping
-    public Page<User> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "10") int size,
-                                  @RequestParam(defaultValue = "id") String sortBy,
-                                  @RequestParam(defaultValue = "asc") String order) {
+    public Page<User> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String order) {
+        
         Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
         return userService.getAllUsers(pageable);
     }
 
