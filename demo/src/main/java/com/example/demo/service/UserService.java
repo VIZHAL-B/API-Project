@@ -5,7 +5,6 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
 
     @Autowired
@@ -21,55 +19,42 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // ✅ Fetch users between two ID points
+    // ✅ Fetch users within a given ID range (JPQL Query)
     public List<User> getUsersBetweenIds(Long startId, Long endId) {
-        return userRepository.findUsersBetweenIds(startId, endId);
+        return userRepository.findUsersInRange(startId, endId);
     }
 
-    // Fetch all users with pagination & sorting
+    // ✅ Get all users with sorting & pagination
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    // Fetch all users with sorting (without pagination)
-    public List<User> getAllUsers(Sort sort) {
-        return userRepository.findAll(sort);
-    }
-
-    // Fetch a user by ID
+    // ✅ Get user by ID
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    // Fetch a user by email (Custom JPA method)
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    // Fetch users by preferred language with sorting
-    public List<User> getUsersByPreferredLanguage(String language, Sort sort) {
-        return userRepository.findByPreferredLanguage(language, sort);
-    }
-
-    // Save a new user
+    // ✅ Create a new user
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
-    // Update an existing user
+    // ✅ Update user by ID
     public Optional<User> updateUser(Long id, User userDetails) {
-        return userRepository.findById(id).map(existingUser -> {
-            existingUser.setName(userDetails.getName());
-            existingUser.setEmail(userDetails.getEmail());
-            existingUser.setPassword(userDetails.getPassword());
-            existingUser.setPreferredLanguage(userDetails.getPreferredLanguage());
-            existingUser.setProfilePicture(userDetails.getProfilePicture());
-            return userRepository.save(existingUser);
+        return userRepository.findById(id).map(user -> {
+            user.setName(userDetails.getName());
+            user.setEmail(userDetails.getEmail());
+            return userRepository.save(user);
         });
     }
 
-    // Delete a user by ID
+    // ✅ Delete user by ID
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // ✅ Fetch users by name using JPQL
+    public List<User> getUsersByName(String name) {
+        return userRepository.findUsersByName(name);
     }
 }

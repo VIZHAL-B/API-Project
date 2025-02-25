@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,9 +25,9 @@ public class LearningGoalController {
         this.learningGoalService = learningGoalService;
     }
 
-    // ✅ Get all learning goals with sorting & pagination
+    // ✅ Fetch all learning goals with sorting & pagination
     @GetMapping
-    public Page<LearningGoal> getAllLearningGoals(
+    public ResponseEntity<Page<LearningGoal>> getAllLearningGoals(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -36,42 +36,47 @@ public class LearningGoalController {
         Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
-        return learningGoalService.getAllLearningGoals(pageable);
+        return ResponseEntity.ok(learningGoalService.getAllLearningGoals(pageable));
     }
 
-    // ✅ Get learning goal by ID
+    // ✅ Fetch a learning goal by ID
     @GetMapping("/{id}")
     public ResponseEntity<LearningGoal> getLearningGoalById(@PathVariable Long id) {
         return learningGoalService.getLearningGoalById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // ✅ Fetch learning goals within a given ID range
     @GetMapping("/range")
-    public List<LearningGoal> getLearningGoalsInRange(
+    public ResponseEntity<List<LearningGoal>> getLearningGoalsInRange(
             @RequestParam Long startId,
             @RequestParam Long endId) {
-        return learningGoalService.getLearningGoalsBetweenIds(startId, endId);
+        return ResponseEntity.ok(learningGoalService.getLearningGoalsBetweenIds(startId, endId));
+    }
+
+    // ✅ Fetch learning goals before a certain target completion date
+    @GetMapping("/before-date")
+    public ResponseEntity<List<LearningGoal>> getLearningGoalsBeforeDate(@RequestParam LocalDate date) {
+        return ResponseEntity.ok(learningGoalService.getLearningGoalsBeforeTargetDate(date));
     }
 
     // ✅ Search learning goals by title (JPQL Query)
     @GetMapping("/search")
-    public List<LearningGoal> searchByTitle(@RequestParam String title) {
-        return learningGoalService.searchByTitle(title);
+    public ResponseEntity<List<LearningGoal>> searchByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(learningGoalService.searchByTitle(title));
     }
 
     // ✅ Count learning goals for a specific user (JPQL Query)
     @GetMapping("/count")
-    public long countLearningGoalsByUser(@RequestParam Long userId) {
-        return learningGoalService.countLearningGoalsByUser(userId);
+    public ResponseEntity<Long> countLearningGoalsByUser(@RequestParam Long userId) {
+        return ResponseEntity.ok(learningGoalService.countLearningGoalsByUser(userId));
     }
 
     // ✅ Create a new learning goal
     @PostMapping
     public ResponseEntity<LearningGoal> createLearningGoal(@Validated @RequestBody LearningGoal learningGoal) {
-        LearningGoal savedGoal = learningGoalService.saveLearningGoal(learningGoal);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedGoal);
+        return ResponseEntity.ok(learningGoalService.saveLearningGoal(learningGoal));
     }
 
     // ✅ Update an existing learning goal
@@ -82,7 +87,7 @@ public class LearningGoalController {
 
         return learningGoalService.updateLearningGoal(id, learningGoalDetails)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // ✅ Delete a learning goal by ID

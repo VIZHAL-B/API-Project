@@ -64,6 +64,9 @@ public class LearningGoalService {
     // ✅ Delete a learning goal
     @Transactional
     public void deleteLearningGoal(Long id) {
+        if (!learningGoalRepository.existsById(id)) {
+            throw new IllegalArgumentException("Error: Learning Goal with ID " + id + " does not exist.");
+        }
         learningGoalRepository.deleteById(id);
     }
 
@@ -79,7 +82,7 @@ public class LearningGoalService {
 
     // ✅ JPQL Query: Find learning goals by title (case insensitive)
     public List<LearningGoal> searchByTitle(String title) {
-        return learningGoalRepository.findByTitleContainingIgnoreCase(title);
+        return learningGoalRepository.searchByTitle(title);
     }
 
     // ✅ JPQL Query: Count learning goals for a specific user
