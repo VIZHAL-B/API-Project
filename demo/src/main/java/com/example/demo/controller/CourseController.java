@@ -34,7 +34,7 @@ public class CourseController {
                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Sorting: Get all courses sorted by name
+    // ✅ Sorting: Get all courses sorted by title
     @GetMapping("/sorted")
     public List<Course> getAllSortedCourses() {
         return courseService.getCoursesSorted();
@@ -58,10 +58,10 @@ public class CourseController {
         return courseService.getCoursesByLevel(level);
     }
 
-    // ✅ Search courses by name (case insensitive)
+    // ✅ Search courses by title (case insensitive)
     @GetMapping("/search")
-    public List<Course> searchCoursesByName(@RequestParam String name) {
-        return courseService.searchCoursesByName(name);
+    public List<Course> searchCoursesByTitle(@RequestParam String title) {
+        return courseService.searchCoursesByTitle(title);
     }
 
     // ✅ Create a new course
