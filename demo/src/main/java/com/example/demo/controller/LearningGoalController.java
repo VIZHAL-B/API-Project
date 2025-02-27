@@ -27,17 +27,20 @@ public class LearningGoalController {
 
     // ✅ Fetch all learning goals with sorting & pagination
     @GetMapping
-    public ResponseEntity<Page<LearningGoal>> getAllLearningGoals(
+    public ResponseEntity<List<LearningGoal>> getAllLearningGoals(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String order) {
-
+    
         Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-
-        return ResponseEntity.ok(learningGoalService.getAllLearningGoals(pageable));
+    
+        Page<LearningGoal> learningGoalsPage = learningGoalService.getAllLearningGoals(pageable);
+    
+        return ResponseEntity.ok(learningGoalsPage.getContent()); // ✅ Returning only the list of LearningGoal objects
     }
+    
 
     // ✅ Fetch a learning goal by ID
     @GetMapping("/{id}")

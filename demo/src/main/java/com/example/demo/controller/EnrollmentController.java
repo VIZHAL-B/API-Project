@@ -34,27 +34,9 @@ public class EnrollmentController {
                          .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Sorting: Get all enrollments sorted by date
-    @GetMapping("/sorted")
-    public List<Enrollment> getAllSortedEnrollments() {
-        return enrollmentService.getEnrollmentsSorted();
-    }
-
-    // ✅ Pagination: Get enrollments with pagination
-    @GetMapping("/paginated")
-    public Page<Enrollment> getEnrollmentsPaginated(@RequestParam int page, @RequestParam int size) {
-        return enrollmentService.getEnrollmentsPaginated(page, size);
-    }
-
-    // ✅ JPQL: Search enrollments by student name (case insensitive)
-    @GetMapping("/search")
-    public List<Enrollment> searchByStudentName(@RequestParam String name) {
-        return enrollmentService.searchEnrollmentsByStudentName(name);
-    }
-
-    // ✅ Create a new enrollment
+    // ✅ Create or update an enrollment
     @PostMapping
-    public Enrollment createEnrollment(@RequestBody Enrollment enrollment) {
+    public Enrollment createOrUpdateEnrollment(@RequestBody Enrollment enrollment) {
         return enrollmentService.saveEnrollment(enrollment);
     }
 
@@ -63,5 +45,15 @@ public class EnrollmentController {
     public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
         enrollmentService.deleteEnrollment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ Combined Pagination & Sorting
+    @GetMapping("/paginated-sorted")
+    public Page<Enrollment> getEnrollmentsPaginatedSorted(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "enrollmentDate") String sortBy,
+            @RequestParam(defaultValue = "asc") String order) {
+        return enrollmentService.getEnrollmentsPaginatedSorted(page, size, sortBy, order);
     }
 }

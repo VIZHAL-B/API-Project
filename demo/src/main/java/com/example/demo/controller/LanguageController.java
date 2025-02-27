@@ -20,11 +20,13 @@ public class LanguageController {
         this.languageService = languageService;
     }
 
+    // ✅ Get all languages
     @GetMapping
     public List<Language> getAllLanguages() {
         return languageService.getAllLanguages();
     }
 
+    // ✅ Get language by ID
     @GetMapping("/{id}")
     public ResponseEntity<Language> getLanguageById(@PathVariable Long id) {
         Optional<Language> language = languageService.getLanguageById(id);
@@ -32,38 +34,37 @@ public class LanguageController {
                        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // ✅ Get language by code
     @GetMapping("/code/{code}")
     public ResponseEntity<Language> getLanguageByCode(@PathVariable String code) {
         Language language = languageService.getLanguageByCode(code);
         return language != null ? ResponseEntity.ok(language) : ResponseEntity.notFound().build();
     }
 
+    // ✅ Create a new language
     @PostMapping
     public Language createLanguage(@RequestBody Language language) {
         return languageService.saveLanguage(language);
     }
 
+    // ✅ Delete language by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
         languageService.deleteLanguage(id);
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ **Sorting**
-    @GetMapping("/sorted")
-    public List<Language> getLanguagesSorted() {
-        return languageService.getLanguagesSorted();
-    }
-
-    // ✅ **Pagination**
-    @GetMapping("/paginated")
-    public Page<Language> getLanguagesPaginated(
+    // ✅ Pagination & Sorting
+    @GetMapping("/sorted-paginated")
+    public Page<Language> getLanguagesSortedAndPaginated(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return languageService.getLanguagesPaginated(page, size);
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String order) {
+        return languageService.getLanguagesSortedAndPaginated(page, size, sortBy, order);
     }
 
-    // ✅ **JPQL Search by Name**
+    // ✅ Search by name
     @GetMapping("/search")
     public List<Language> searchLanguagesByName(@RequestParam String name) {
         return languageService.searchLanguagesByName(name);

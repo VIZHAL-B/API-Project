@@ -4,10 +4,10 @@ import com.example.demo.model.Course;
 import com.example.demo.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,10 +20,10 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    // ✅ Get all courses
+    // ✅ Get all courses with pagination & sorting
     @GetMapping
-    public List<Course> getAllCourses() {
-        return courseService.getAllCourses();
+    public Page<Course> getAllCourses(Pageable pageable) {
+        return courseService.getAllCourses(pageable);
     }
 
     // ✅ Get a course by ID
@@ -34,39 +34,27 @@ public class CourseController {
                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Sorting: Get all courses sorted by title
-    @GetMapping("/sorted")
-    public List<Course> getAllSortedCourses() {
-        return courseService.getCoursesSorted();
+    // ✅ Get courses by language with pagination & sorting
+    @GetMapping("/language")
+    public Page<Course> getCoursesByLanguage(@RequestParam String language, Pageable pageable) {
+        return courseService.getCoursesByLanguage(language, pageable);
     }
 
-    // ✅ Pagination: Get paginated list of courses
-    @GetMapping("/paginated")
-    public Page<Course> getCoursesPaginated(@RequestParam int page, @RequestParam int size) {
-        return courseService.getCoursesPaginated(page, size);
+    // ✅ Get courses by level with pagination & sorting
+    @GetMapping("/level")
+    public Page<Course> getCoursesByLevel(@RequestParam String level, Pageable pageable) {
+        return courseService.getCoursesByLevel(level, pageable);
     }
 
-    // ✅ JPQL: Get courses by language (case insensitive)
-    @GetMapping("/language/{language}")
-    public List<Course> getCoursesByLanguage(@PathVariable String language) {
-        return courseService.getCoursesByLanguage(language);
-    }
-
-    // ✅ JPQL: Get courses by level (case insensitive)
-    @GetMapping("/level/{level}")
-    public List<Course> getCoursesByLevel(@PathVariable String level) {
-        return courseService.getCoursesByLevel(level);
-    }
-
-    // ✅ Search courses by title (case insensitive)
+    // ✅ Search courses by title with pagination & sorting
     @GetMapping("/search")
-    public List<Course> searchCoursesByTitle(@RequestParam String title) {
-        return courseService.searchCoursesByTitle(title);
+    public Page<Course> searchCoursesByTitle(@RequestParam String title, Pageable pageable) {
+        return courseService.searchCoursesByTitle(title, pageable);
     }
 
-    // ✅ Create a new course
+    // ✅ Create or update a course
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
+    public Course createOrUpdateCourse(@RequestBody Course course) {
         return courseService.saveCourse(course);
     }
 

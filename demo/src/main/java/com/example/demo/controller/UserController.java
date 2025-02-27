@@ -31,14 +31,14 @@ public class UserController {
 
     // ✅ Get all users with sorting & pagination
     @GetMapping
-    public Page<User> getAllUsers(
+    public List<User> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String order) {
         Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return userService.getAllUsers(pageable);
+        return userService.getAllUsers(pageable).getContent();
     }
 
     // ✅ Get user by ID

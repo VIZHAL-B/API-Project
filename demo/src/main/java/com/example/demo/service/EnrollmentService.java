@@ -1,13 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Enrollment;
-import com.example.demo.model.User;
-import com.example.demo.model.Course;
 import com.example.demo.repository.EnrollmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,16 +31,6 @@ public class EnrollmentService {
         return enrollmentRepository.findById(id);
     }
 
-    // ✅ Get enrollments by user
-    public List<Enrollment> getEnrollmentsByUser(User user) {
-        return enrollmentRepository.findByUser(user);
-    }
-
-    // ✅ Get enrollments by course
-    public List<Enrollment> getEnrollmentsByCourse(Course course) {
-        return enrollmentRepository.findByCourse(course);
-    }
-
     // ✅ Save (Create/Update) enrollment
     public Enrollment saveEnrollment(Enrollment enrollment) {
         return enrollmentRepository.save(enrollment);
@@ -52,19 +41,10 @@ public class EnrollmentService {
         enrollmentRepository.deleteById(id);
     }
 
-    // ✅ Sorting: Get enrollments sorted by date
-    public List<Enrollment> getEnrollmentsSorted() {
-        return enrollmentRepository.findAllByOrderByEnrollmentDateAsc();
-    }
-
-    // ✅ Pagination: Get enrollments with pagination
-    public Page<Enrollment> getEnrollmentsPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    // ✅ Combined Pagination & Sorting
+    public Page<Enrollment> getEnrollmentsPaginatedSorted(int page, int size, String sortBy, String order) {
+        Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return enrollmentRepository.findAll(pageable);
-    }
-
-    // ✅ JPQL: Search enrollments by student name
-    public List<Enrollment> searchEnrollmentsByStudentName(String name) {
-        return enrollmentRepository.searchByStudentName(name);
     }
 }

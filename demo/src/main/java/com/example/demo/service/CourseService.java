@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,39 +18,37 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+    // ✅ Get all courses with pagination & sorting
+    public Page<Course> getAllCourses(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
+    // ✅ Get a course by ID
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);
     }
 
-    public List<Course> getCoursesSorted() {
-        return courseRepository.findAllByOrderByTitleAsc();
+    // ✅ Get courses by language with pagination & sorting
+    public Page<Course> getCoursesByLanguage(String language, Pageable pageable) {
+        return courseRepository.findByLanguage(language, pageable);
     }
 
-    public Page<Course> getCoursesPaginated(int page, int size) {
-        return courseRepository.findAll(Pageable.ofSize(size).withPage(page));
+    // ✅ Get courses by level with pagination & sorting
+    public Page<Course> getCoursesByLevel(String level, Pageable pageable) {
+        return courseRepository.findByLevel(level, pageable);
     }
 
-    public List<Course> getCoursesByLanguage(String language) {
-        return courseRepository.findByLanguage(language);
+    // ✅ Search courses by title with pagination & sorting
+    public Page<Course> searchCoursesByTitle(String title, Pageable pageable) {
+        return courseRepository.searchByTitle(title, pageable);
     }
 
-    public List<Course> getCoursesByLevel(String level) {
-        return courseRepository.findByLevel(level);
-    }
-
-    // ✅ Corrected: Implement the missing method
-    public List<Course> searchCoursesByTitle(String title) {
-        return courseRepository.searchByTitle(title);
-    }
-
+    // ✅ Create or update a course
     public Course saveCourse(Course course) {
         return courseRepository.save(course);
     }
 
+    // ✅ Delete a course by ID
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
     }

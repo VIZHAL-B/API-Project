@@ -13,17 +13,14 @@ import java.util.Optional;
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Long> {
 
-    // ✅ Sorting: Find all languages sorted by name
-    List<Language> findAllByOrderByNameAsc();
-
-    // ✅ Pagination: Fetch languages with pagination
+    // ✅ Pagination and Sorting (built-in support from JpaRepository)
     Page<Language> findAll(Pageable pageable);
 
-    // ✅ JPQL: Custom Query to find a language by code
+    // ✅ Custom Query to find a language by code
     @Query("SELECT l FROM Language l WHERE l.code = :code")
     Optional<Language> findByCode(String code);
 
-    // ✅ JPQL: Search by name (case insensitive)
+    // ✅ Search by name (case insensitive)
     @Query("SELECT l FROM Language l WHERE LOWER(l.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Language> searchByName(String name);
 }
